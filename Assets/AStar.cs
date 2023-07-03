@@ -44,6 +44,7 @@ public class AStar : MapLoader
                 {
                     cell.GetComponent<SpriteRenderer>().color = Color.blue;
                     cell.GetComponent<Cell>().Floor = FloorData.Start;
+                    cell.GetComponent<Cell>().MyPosition = new Position(h, w);
                     _start = new Position(h, w);
                 }
                 else if (MapData[h, w] == (int)FloorData.Goal)
@@ -63,17 +64,18 @@ public class AStar : MapLoader
     public void Search()
     {
         Cell firstTarget = _cellData[_start.x, _start.y].GetComponent<Cell>();
-        List<Cell> searchCell = new List<Cell>() { firstTarget};
+        List<Cell> searchCell = new List<Cell>();
+        searchCell.Add(firstTarget);
         Position target = new Position(0, 0);
         bool isGoal = false;
         while(!isGoal && searchCell.Count > 0)
         {
-            Cell currentCell = _cellData[target.x, target.y].GetComponent<Cell>();
-            if (currentCell.Floor == FloorData.Open)
-            {
-                currentCell.Floor = FloorData.Close;
-            }
-            currentCell = searchCell[0].GetComponent<Cell>();
+            //Cell currentCell = _cellData[target.x, target.y].GetComponent<Cell>();
+            //if (currentCell.Floor == FloorData.Open)
+            //{
+            //    currentCell.Floor = FloorData.Close;
+            //}
+            Cell currentCell = searchCell[0].GetComponent<Cell>();
             searchCell.RemoveAt(0);
             target = currentCell.MyPosition;
             foreach(var dir in Enum.GetValues(typeof(Direction)))
@@ -116,21 +118,22 @@ public class AStar : MapLoader
                     {
                         next.BasePosition = target;
                         isGoal = true;
+                        Debug.Log("ÉSÅ[ÉãÇ…ÇΩÇ«ÇËíÖÇ¢ÇΩ");
                         break;
                     }
                 }
             }
-            if(isGoal)
-            {
-
-            }
+        }
+        if (isGoal)
+        {
+            StartCoroutine(Route(SetRoute()));
         }
     }
 
     List<Position> SetRoute()
     {
         List<Position> route = new List<Position>();
-        Position routePosition = new Position(0, 0);
+        Position routePosition = new Position(_goal.x, _goal.y);
         while(true)
         {
             route.Add(routePosition);
@@ -139,6 +142,15 @@ public class AStar : MapLoader
             routePosition = basePosition;
         }
         return route;
+    }
+
+    IEnumerator Route(List<Position> route)
+    {
+        for(int i = route.Count - 1; i >= 0; i--)
+        {
+            _cellData[route[i].x, route[i].y].GetComponent<SpriteRenderer>().color = Color.yellow;
+            yield return new WaitForSeconds(1f);
+        }
     }
 
     enum Direction
