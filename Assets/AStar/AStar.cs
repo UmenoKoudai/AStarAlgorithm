@@ -12,6 +12,7 @@ public class AStar : MapLoader
     [SerializeField] int _cellSizeX;
     [SerializeField] int _cellSizeY;
     [SerializeField] GameObject _cellPrefab;
+    [SerializeField, Range(0, 1)] float _routeInterval;
     Vector2 _cellPosition;
     Position _start = new Position(0, 0);
     Position _goal = new Position(0, 0);
@@ -70,12 +71,12 @@ public class AStar : MapLoader
         bool isGoal = false;
         while(!isGoal && searchCell.Count > 0)
         {
-            //Cell currentCell = _cellData[target.x, target.y].GetComponent<Cell>();
-            //if (currentCell.Floor == FloorData.Open)
-            //{
-            //    currentCell.Floor = FloorData.Close;
-            //}
-            Cell currentCell = searchCell[0].GetComponent<Cell>();
+            Cell currentCell = _cellData[target.x, target.y].GetComponent<Cell>();
+            if (currentCell.Floor == FloorData.Open)
+            {
+                currentCell.Floor = FloorData.Close;
+            }
+            currentCell = searchCell[0].GetComponent<Cell>();
             searchCell.RemoveAt(0);
             target = currentCell.MyPosition;
             foreach(var dir in Enum.GetValues(typeof(Direction)))
@@ -149,7 +150,7 @@ public class AStar : MapLoader
         for(int i = route.Count - 1; i >= 0; i--)
         {
             _cellData[route[i].x, route[i].y].GetComponent<SpriteRenderer>().color = Color.yellow;
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(_routeInterval);
         }
     }
 

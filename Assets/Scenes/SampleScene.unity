@@ -264,6 +264,7 @@ MonoBehaviour:
   _cellSizeX: 1
   _cellSizeY: 1
   _cellPrefab: {fileID: 7137340735842144853, guid: f568c82a2b786044b8ac665efe322342, type: 3}
+  _routeInterval: 0.4
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
